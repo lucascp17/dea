@@ -105,7 +105,7 @@
 			const viewportHeight = window.outerHeight;
 			const viewportWidth = window.outerWidth;
 			const viewportSize = viewportHeight < viewportWidth ? viewportHeight : viewportWidth;
-			const squareSize = viewportSize - 200;
+			const squareSize = viewportSize;
 			const sideSize = squareSize / numberOfSides;
 			const matrix = buildMatrix();
 			const translateMask = /translate\((.*)px, (.*)px\)/i;
