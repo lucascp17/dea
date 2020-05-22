@@ -1,7 +1,116 @@
 <html>
+	<head>
+		<style>
+			.image {
+				height: 90vh;
+				width: 90vh;
+			}
+			
+			.image-wrapper {
+				border: 1px solid gray;
+				float: left;
+				height: 30vh;
+				width: 30vh;
+				overflow: hidden;
+			}
+			
+			#main {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+			}
+			
+			#puzzle {
+				width: 91vh;
+			}
+			
+			#image-0-0 {
+				margin-top: 0vh;
+				margin: 0vh;
+			}
+			
+			#image-0-1 {
+				margin-top: 0vh;
+				margin-left: -30vh;
+			}
+			
+			#image-0-2 {
+				margin-top: 0vh;
+				margin-left: -60vh;
+			}
+			
+			#image-1-0 {
+				margin-top: -30vh;
+				margin-left: 0vh;
+			}
+			
+			#image-1-1 {
+				margin-top: -30vh;
+				margin-left: -30vh;
+			}
+			
+			#image-1-2 {
+				margin-top: -30vh;
+				margin-left: -60vh;
+			}
+			
+			#image-2-0 {
+				margin-top: -60vh;
+				margin-left: 0vh;
+			}
+			
+			#image-2-1 {
+				margin-top: -60vh;
+				margin-left: -30vh;
+			}
+			
+			#image-2-2 {
+				margin-top: -60vh;
+				margin-left: -60vh;
+			}
+		</style>
+	</head>
 	<body>
-		<h1>
-			Hello, world!
-		</h1>
+		<div id="main">
+			<div id="puzzle">
+				<div id="image-wrapper-0-0" class="image-wrapper">
+					<img id="image-0-0" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-0-1" class="image-wrapper">
+					<img id="image-0-1" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-0-2" class="image-wrapper">
+					<img id="image-0-2" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-1-0" class="image-wrapper">
+					<img id="image-1-0" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-1-1" class="image-wrapper">
+					<img id="image-1-1" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-1-2" class="image-wrapper">
+					<img id="image-1-2" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-2-0" class="image-wrapper">
+					<img id="image-2-0" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-2-1" class="image-wrapper">
+					<img id="image-2-1" class="image" src="image.jpg">
+					</img>
+				</div>
+				<div id="image-wrapper-blank" class="image-wrapper">
+					<img id="image-blank" class="image">
+					</img>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
