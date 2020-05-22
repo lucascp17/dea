@@ -1,17 +1,37 @@
 <html>
 	<head>
-		<style>
-			.image {
-				height: 90vh;
-				width: 90vh;
+		<style type="text/css">
+			@keyframes beating {
+				0% {
+					transform: scale(1, 1);
+				}
+				48% {
+					transform: scale(1, 1);
+				}
+				50% {
+					transform: scale(1.2, 1.2);
+				}
+				60% {
+					transform: scale(1, 1);
+				}
+				68% {
+					transform: scale(1, 1);
+				}
+				70% {
+					transform: scale(1.2, 1.2);
+				}
+				80% {
+					transform: scale(1, 1);
+				}
 			}
 			
-			.image-wrapper {
-				border: 1px solid gray;
-				float: left;
-				height: 30vh;
-				width: 30vh;
-				overflow: hidden;
+			@keyframes showoff {
+				0% {
+					opacity: 0.0;
+				}
+				100% {
+					opacity: 1.0;
+				}
 			}
 			
 			#main {
@@ -22,95 +42,372 @@
 			}
 			
 			#puzzle {
-				width: 91vh;
+				border: 3px solid LightSlateGray;
 			}
 			
-			#image-0-0 {
-				margin-top: 0vh;
-				margin: 0vh;
+			#congratz {
+				animation: showoff 2s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				position: absolute;
+				z-index: 10;
 			}
 			
-			#image-0-1 {
-				margin-top: 0vh;
-				margin-left: -30vh;
+			#congratz-content {
+				margin: 20px;
+				text-align: center;
 			}
 			
-			#image-0-2 {
-				margin-top: 0vh;
-				margin-left: -60vh;
+			#congratz h1 {
+				color: white;
+				text-align: center;
 			}
 			
-			#image-1-0 {
-				margin-top: -30vh;
-				margin-left: 0vh;
+			#congratz h2 {
+				color: white;
+				text-align: center;
 			}
 			
-			#image-1-1 {
-				margin-top: -30vh;
-				margin-left: -30vh;
+			#messages {
+				background-color: #d41c31;
+				border: 5px double white;
 			}
 			
-			#image-1-2 {
-				margin-top: -30vh;
-				margin-left: -60vh;
-			}
-			
-			#image-2-0 {
-				margin-top: -60vh;
-				margin-left: 0vh;
-			}
-			
-			#image-2-1 {
-				margin-top: -60vh;
-				margin-left: -30vh;
-			}
-			
-			#image-2-2 {
-				margin-top: -60vh;
-				margin-left: -60vh;
+			#heart-shape {
+				animation: beating 2s infinite;
+				color: red;
+				margin-left: auto;
+				margin-right: auto;
 			}
 		</style>
 	</head>
 	<body>
 		<div id="main">
 			<div id="puzzle">
-				<div id="image-wrapper-0-0" class="image-wrapper">
-					<img id="image-0-0" class="image" src="image.jpg">
+			</div>
+			
+			<div id="congratz">
+				<div id="congratz-content">
+					<img id="heart-shape" src="heart.svg">
 					</img>
-				</div>
-				<div id="image-wrapper-0-1" class="image-wrapper">
-					<img id="image-0-1" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-0-2" class="image-wrapper">
-					<img id="image-0-2" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-1-0" class="image-wrapper">
-					<img id="image-1-0" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-1-1" class="image-wrapper">
-					<img id="image-1-1" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-1-2" class="image-wrapper">
-					<img id="image-1-2" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-2-0" class="image-wrapper">
-					<img id="image-2-0" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-2-1" class="image-wrapper">
-					<img id="image-2-1" class="image" src="image.jpg">
-					</img>
-				</div>
-				<div id="image-wrapper-blank" class="image-wrapper">
-					<img id="image-blank" class="image">
-					</img>
+					<div id="messages">
+						<h1>Parabéns, amor!</h1>
+						<h2>Eu te amo!</h2>
+					</div>
 				</div>
 			</div>
 		</div>
+		
+		<script type="text/javascript">
+			
+			const numberOfSides = 3;
+			const viewportHeight = window.outerHeight;
+			const viewportWidth = window.outerWidth;
+			const viewportSize = viewportHeight < viewportWidth ? viewportHeight : viewportWidth;
+			const squareSize = viewportSize - 200;
+			const sideSize = squareSize / numberOfSides;
+			const matrix = buildMatrix();
+			const translateMask = /translate\((.*)px, (.*)px\)/i;
+			
+			let blankCell = {x: numberOfSides - 1, y: numberOfSides - 1};
+			let previusBlankCell = {x: 0, y: 0};
+			
+			let checkIfResolved = function() { return false; };
+			
+			preparePuzzle();
+			prepareCongratz();
+			shuffle();
+			setResolvedFunction();
+			startEngine();
+			
+			function buildMatrix() {
+				function createImage(i, j) {
+					let image = document.createElement('img');
+					
+					image.className = 'image';
+					
+					image.src = "image.jpg";
+					image.style.width = squareSize + 'px';
+					image.style.height = squareSize + 'px';
+					image.style.marginTop = (sideSize * i * -1) + 'px';
+					image.style.marginLeft = (sideSize * j * -1) + 'px';
+					
+					return image;
+				}
+			
+				function createImageWrapper(i, j) {
+					let cell = document.createElement('div');
+					
+					cell.id = 'image-wrapper-' + i + '-' + j;
+					cell.className = 'image-wrapper';
+					cell.setAttribute('goal', 'image-wrapper-' + i + '-' + j);
+					
+					cell.style.border = '1px solid LightSlateGray';
+					cell.style.float = 'left';
+					cell.style.overflow = 'hidden';
+					cell.style.width = (sideSize - 2) + 'px';
+					cell.style.height = (sideSize - 2) + 'px';
+					cell.style.transition = 'transform .3s';
+					cell.style.transform = 'translate(0px, 0px)';
+					cell.appendChild(createImage(i, j));
+					
+					return cell;
+				}
+				
+				let matrix = [];
+				for (let i = 0; i < numberOfSides; ++i)
+					matrix[i] = [];
+				for (let i = 0; i < numberOfSides; ++i)
+					for (let j = 0; j < numberOfSides; ++j)
+						matrix[i][j] = createImageWrapper(i, j);
+						
+				return matrix;
+			}
+			
+			function preparePuzzle() {
+				let puzzle = document.getElementById('puzzle');
+				puzzle.style.width = squareSize + 'px';
+				let limit = numberOfSides - 1;
+				
+				for (let i = 0; i < matrix.length; ++i)
+					for (let j = 0; j < matrix[i].length; ++j)
+						if (i < limit || j < limit)
+							puzzle.appendChild(matrix[i][j]);
+			}
+			
+			function getTranslatedX(cell) {
+				let transformStr = cell.style.transform;
+				
+				let numberStr = translateMask.exec(transformStr)[2];
+				return Number(numberStr);
+			}
+			
+			function getTranslatedY(cell) {
+				let transformStr = cell.style.transform;
+				
+				let numberStr = translateMask.exec(transformStr)[1];
+				return Number(numberStr);
+			}
+			
+			function action(x, y) {
+				previusBlankCell = blankCell;
+				blankCell = {x: x, y: y};
+				cycleEngine();
+			}
+			
+			function removeOldButtons() {
+				
+				function updateCell(i, j) {
+					if (i < 0 || i >= numberOfSides || j < 0 || j >= numberOfSides)
+						return;
+					let cellId = 'image-wrapper-' + i + '-' + j;
+					let cell = document.getElementById(cellId);
+					cell.style.cursor = 'auto';
+					cell.onclick = null;
+				}
+				
+				let x = previusBlankCell.x;
+				let y = previusBlankCell.y;
+				
+				updateCell(x - 1, y);
+				updateCell(x + 1, y);
+				updateCell(x, y - 1);
+				updateCell(x, y + 1);
+			}
+			
+			function updateCellProperties(cell) {
+				cell.id = 'image-wrapper-' + previusBlankCell.x + '-' + previusBlankCell.y;
+			}
+			
+			function moveBlankCellDown() {
+				let cellId = 'image-wrapper-' + blankCell.x + '-' + blankCell.y;
+				let cell = document.getElementById(cellId);
+				updateCellProperties(cell);
+				
+				let oldTranslatedX = getTranslatedX(cell);
+				let oldTranslatedY = getTranslatedY(cell);
+				
+				let newTranslatedX = oldTranslatedX - sideSize;
+				let newTranslatedY = oldTranslatedY;
+				
+				cell.style.transform = 'translate(' + newTranslatedY + 'px, ' + newTranslatedX + 'px)';
+			}
+			
+			function moveBlankCellUp() {
+				let cellId = 'image-wrapper-' + blankCell.x + '-' + blankCell.y;
+				let cell = document.getElementById(cellId);
+				updateCellProperties(cell);
+				
+				let oldTranslatedX = getTranslatedX(cell);
+				let oldTranslatedY = getTranslatedY(cell);
+				
+				let newTranslatedX = oldTranslatedX + sideSize;
+				let newTranslatedY = oldTranslatedY;
+				
+				cell.style.transform = 'translate(' + newTranslatedY + 'px, ' + newTranslatedX + 'px)';
+			}
+			
+			function moveBlankCellRight() {
+				let cellId = 'image-wrapper-' + blankCell.x + '-' + blankCell.y;
+				let cell = document.getElementById(cellId);
+				updateCellProperties(cell);
+				
+				let oldTranslatedX = getTranslatedX(cell);
+				let oldTranslatedY = getTranslatedY(cell);
+				
+				let newTranslatedX = oldTranslatedX;
+				let newTranslatedY = oldTranslatedY - sideSize;
+				
+				cell.style.transform = 'translate(' + newTranslatedY + 'px, ' + newTranslatedX + 'px)';
+			}
+			
+			function moveBlankCellLeft() {
+				let cellId = 'image-wrapper-' + blankCell.x + '-' + blankCell.y;
+				let cell = document.getElementById(cellId);
+				updateCellProperties(cell);
+				
+				let oldTranslatedX = getTranslatedX(cell);
+				let oldTranslatedY = getTranslatedY(cell);
+				
+				let newTranslatedX = oldTranslatedX;
+				let newTranslatedY = oldTranslatedY + sideSize;
+				
+				cell.style.transform = 'translate(' + newTranslatedY + 'px, ' + newTranslatedX + 'px)';
+			}
+			
+			function moveBlankCell() {
+				if (blankCell.x == previusBlankCell.x && blankCell.y < previusBlankCell.y)
+					moveBlankCellLeft();
+				else if (blankCell.x == previusBlankCell.x && blankCell.y > previusBlankCell.y)
+					moveBlankCellRight();
+				else if (blankCell.y == previusBlankCell.y && blankCell.x < previusBlankCell.x)
+					moveBlankCellUp();
+				else if (blankCell.y == previusBlankCell.y && blankCell.x > previusBlankCell.x)
+					moveBlankCellDown();
+			}
+			
+			function addNewButtons() {
+				
+				function updateCell(i, j) {
+					if (i < 0 || i >= numberOfSides || j < 0 || j >= numberOfSides)
+						return;
+					const a = i;
+					const b = j;
+					let cellId = 'image-wrapper-' + i + '-' + j;
+					let cell = document.getElementById(cellId);
+					cell.style.cursor = 'pointer';
+					cell.onclick = function() { action(a, b); };
+				}
+				
+				let x = blankCell.x;
+				let y = blankCell.y;
+				
+				updateCell(x - 1, y);
+				updateCell(x + 1, y);
+				updateCell(x, y - 1);
+				updateCell(x, y + 1);
+			}
+			
+			function cycleEngine() {
+				removeOldButtons();
+				moveBlankCell();
+				if (checkIfResolved())
+					showResolvedGameAnimation();
+				else
+					addNewButtons();
+			}
+			
+			function startEngine() {
+				addNewButtons();
+			}
+			
+			function buildPossibleMovesMatrix() {
+				let x = blankCell.x;
+				let y = blankCell.y;
+				let possibleMoves = [];
+				
+				if (x - 1 >= 0)
+					possibleMoves.push({x: x - 1, y: y});
+				if (x + 1 < numberOfSides)
+					possibleMoves.push({x: x + 1, y: y});
+				if (y - 1 >= 0)
+					possibleMoves.push({x: x, y: y - 1});
+				if (y + 1 < numberOfSides)
+					possibleMoves.push({x: x, y: y + 1});
+					
+				return possibleMoves;
+			}
+			
+			function cycleShuffle() {
+				let possibleMoves = buildPossibleMovesMatrix();
+				let k = (Math.random() * possibleMoves.length) >> 0;
+				let randomMove = possibleMoves[k];
+				
+				previusBlankCell = blankCell;
+				blankCell = randomMove;
+				
+				cycleEngine();
+			}
+			
+			function cycleFinishShuffle() {
+				let x = blankCell.x;
+				let y = blankCell.y;
+				
+				if (x < (numberOfSides - 1)) {
+					previusBlankCell = blankCell;
+					blankCell = {x: x + 1, y: y};
+					cycleEngine();
+				} else if (y < (numberOfSides - 1)) {
+					previusBlankCell = blankCell;
+					blankCell = {x: x, y: y + 1};
+					cycleEngine();
+				}
+			}
+			
+			function finishShuffle() {
+				while (blankCell.x < (numberOfSides - 1) || blankCell.y < (numberOfSides - 1))
+					cycleFinishShuffle();
+			}
+			
+			function shuffle() {
+				let shuffleIndex = numberOfSides * 25;
+				for (let i = 0; i < shuffleIndex; ++i)
+					cycleShuffle();
+				finishShuffle();
+			}
+			
+			function prepareCongratz() {
+				let congratzSection = document.getElementById('congratz');
+				
+				congratzSection.style.display = 'none';
+				congratzSection.style.width = squareSize + 'px';
+				congratzSection.style.height = squareSize + 'px';
+				
+				let heart = document.getElementById('heart-shape');
+				heart.style.width = (squareSize * 0.6) + 'px';
+				heart.style.height = (squareSize * 0.6) + 'px';
+			}
+			
+			function setResolvedFunction() {
+				checkIfResolved = function() {
+					let wrappers = document.getElementsByClassName('image-wrapper');
+					for (let i = 0; i < wrappers.length; ++i) {
+						let id = wrappers[i].id;
+						let correct = wrappers[i].getAttribute('goal');
+						
+						if (id != correct)
+							return false;
+					}
+					return true;
+				};
+			}
+			
+			function showResolvedGameAnimation() {
+				let congratz = document.getElementById('congratz');
+				congratz.style.display = 'block';
+			}
+			
+		</script>
 	</body>
 </html>
